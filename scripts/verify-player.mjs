@@ -26,7 +26,7 @@ await page.click("[data-command='说得简单点']");
 await page.waitForFunction(() => document.querySelector("#caption").textContent.includes("点菜"), { timeout: 8000 });
 expect("说得简单点切到口语", true);
 await page.click("[data-command='举个例子']");
-await page.waitForFunction(() => document.querySelector("#caption").textContent.includes("交接"), { timeout: 8000 });
+await page.waitForFunction(() => document.querySelector("#caption").textContent.includes("代码"), { timeout: 8000 });
 expect("举个例子切到怎么用", true);
 await page.click("#next-sentence");
 await page.type("#ask", "下一节");

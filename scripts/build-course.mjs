@@ -10,12 +10,13 @@ const voice = "zh-CN-XiaoxiaoNeural";
 
 const POLY = new Set("行重了还为长得地差调数传处乐干降强空蒙");
 const TONES = {
-  平稳: { rate: "-5%", pitch: "+0Hz" },
-  放慢: { rate: "-14%", pitch: "-2Hz" },
-  加重: { rate: "-8%", pitch: "+4Hz" },
-  问句: { rate: "-4%", pitch: "+8Hz" },
-  收束: { rate: "-16%", pitch: "-3Hz" },
+  平稳: { rate: "-3%", pitch: "+0Hz" },
+  放慢: { rate: "-6%", pitch: "+0Hz" },
+  加重: { rate: "-3%", pitch: "+1Hz" },
+  问句: { rate: "-2%", pitch: "+1Hz" },
+  收束: { rate: "-4%", pitch: "+0Hz" },
 };
+const PARAGRAPH_VOICE = { rate: "-3%", pitch: "+0Hz" };
 const SECTIONS = ["开场", "专业讲解", "大白话", "怎么用", "再讲深一点", "边界", "收束"];
 const SECTION_JUMP = {
   说得简单点: "大白话",
@@ -233,11 +234,43 @@ function piecesToSsml(pieces, tone, pause) {
   }
   close();
   const prosody = TONES[tone];
+  const gap = Math.min(pause, 120);
   const ssml =
     `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='zh-CN'>` +
     `<voice name='${voice}'><prosody rate='${prosody.rate}' pitch='${prosody.pitch}'>` +
-    `${body}<break time='${pause}ms'/></prosody></voice></speak>`;
-  return { ssml, plain, rate: prosody.rate, pitch: prosody.pitch, parts: [plain, pause] };
+    `${body}<break time='${gap}ms'/></prosody></voice></speak>`;
+  return { ssml, plain, rate: prosody.rate, pitch: prosody.pitch, parts: [plain, gap] };
+}
+
+function makeParagraph(clips) {
+  const pieces = clips.map((clip) => {
+    const text = clip.parts[0].trim();
+    return /[。！？…]$/.test(text) ? text : `${text}。`;
+  });
+  const joined = pieces.join("");
+  let cursor = 0;
+  for (let index = 0; index < clips.length; index += 1) {
+    const length = pieces[index].length;
+    clips[index].startRatio = cursor / joined.length;
+    clips[index].endRatio = (cursor + length) / joined.length;
+    cursor += length;
+  }
+  const ssml =
+    `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='zh-CN'>` +
+    `<voice name='${voice}'><prosody rate='${PARAGRAPH_VOICE.rate}' pitch='${PARAGRAPH_VOICE.pitch}'>` +
+    `${escapeXml(joined)}</prosody></voice></speak>`;
+  const hash = hashOf(ssml);
+  for (const clip of clips) clip.paragraphHash = hash;
+  return {
+    hash,
+    text: joined,
+    tone: "平稳",
+    pause: 0,
+    ssml,
+    rate: PARAGRAPH_VOICE.rate,
+    pitch: PARAGRAPH_VOICE.pitch,
+    parts: [joined, 0],
+  };
 }
 
 function hashOf(ssml) {
@@ -440,6 +473,7 @@ function buildLesson(file, text, lexicon) {
   const speech = splitH2(blocks.speech);
   const errors = [];
   const sections = {};
+  const paragraphs = {};
   for (const name of SECTIONS) {
     if (!speech.has(name)) errors.push(`${file} 缺少口播段落「${name}」`);
   }
@@ -452,6 +486,7 @@ function buildLesson(file, text, lexicon) {
       errors.push(...compiled.errors);
       if (compiled.clip) sections[name].push(compiled.clip);
     }
+    if (sections[name].length) paragraphs[name] = makeParagraph(sections[name]);
   }
   const parsedQuestions = blocks.ask
     .split(/\n(?=-\s+q:)/)
@@ -475,7 +510,7 @@ function buildLesson(file, text, lexicon) {
       if (compiled.clip) questionClips.push({ q: question.q, ...compiled.clip });
     }
   }
-  const hintText = `这节可以让我换种讲法。你也可以问我：${parsedQuestions.map((item) => item.q).filter(Boolean).join("；")}。`;
+  const hintText = `你要是想换个听法，直接跟我说就行。你也可以问我：${parsedQuestions.map((item) => item.q).filter(Boolean).join("；")}。`;
   const hintCompiled = compileSentence({ tone: "平稳", pause: 280, stress: "", phones: "", say: hintText }, lexicon, file, "提示");
   errors.push(...hintCompiled.errors);
   if (errors.length) return { errors };
@@ -489,6 +524,7 @@ function buildLesson(file, text, lexicon) {
       summaryHtml: renderSummary(blocks.summary),
       summaryText: blocks.summary,
       sections,
+      paragraphs,
       sectionOrder: SECTIONS,
       questions: questionClips,
       hint: hintCompiled.clip,
@@ -557,6 +593,8 @@ function main() {
   for (const lesson of lessons) {
     for (const name of lesson.sectionOrder) {
       for (const clip of lesson.sections[name]) clips[clip.hash] = clip;
+      const paragraph = lesson.paragraphs[name];
+      if (paragraph) clips[paragraph.hash] = paragraph;
     }
     for (const clip of lesson.questions) clips[clip.hash] = clip;
     clips[lesson.hint.hash] = lesson.hint;

@@ -120,21 +120,53 @@ function stopAudio() {
 function playCurrent() {
   const clip = state.flat[state.index];
   if (!clip) return;
+  showClip(clip);
+  const sameParagraph = state.audio && state.paragraphHash === clip.paragraphHash && state.audio.src;
+  if (sameParagraph && Number.isFinite(state.audio.duration)) {
+    state.audio.currentTime = clip.startRatio * state.audio.duration;
+    if (state.audio.paused) state.audio.play();
+    state.paused = false;
+    playButton.textContent = "暂停";
+    saveProgress();
+    return;
+  }
   stopAudio();
   showClip(clip);
-  const audio = new Audio(`/api/audio/${clip.hash}.mp3`);
+  const audio = new Audio(`/api/audio/${clip.paragraphHash}.mp3`);
   audio.playbackRate = Number(document.querySelector("#speed").value);
   state.audio = audio;
+  state.paragraphHash = clip.paragraphHash;
   state.paused = false;
   playButton.textContent = "暂停";
-  caption.textContent = "老师在准备这一句…";
-  audio.addEventListener("playing", () => {
-    caption.textContent = clip.text.replace(/`/g, "");
+  let followCaption = clip.startRatio < 0.02;
+  audio.addEventListener("loadedmetadata", () => {
+    if (clip.startRatio > 0.01 && Number.isFinite(audio.duration)) {
+      audio.currentTime = clip.startRatio * audio.duration;
+    } else {
+      followCaption = true;
+    }
+  });
+  audio.addEventListener("seeked", () => {
+    followCaption = true;
+  });
+  audio.addEventListener("timeupdate", () => {
+    if (!followCaption || !audio.duration) return;
+    const ratio = audio.currentTime / audio.duration;
+    const hit = state.flat.findIndex(
+      (item) => item.paragraphHash === clip.paragraphHash && ratio >= item.startRatio && ratio < item.endRatio + 0.004,
+    );
+    if (hit >= 0 && hit !== state.index) {
+      state.index = hit;
+      showClip(state.flat[hit]);
+      saveProgress();
+    }
   });
   audio.addEventListener("ended", () => {
     if (state.paused) return;
-    if (state.index < state.flat.length - 1) {
-      state.index += 1;
+    let next = state.index + 1;
+    while (next < state.flat.length && state.flat[next].paragraphHash === clip.paragraphHash) next += 1;
+    if (next < state.flat.length) {
+      state.index = next;
       saveProgress();
       playCurrent();
     } else {
@@ -149,8 +181,8 @@ function playCurrent() {
   audio.play().catch(() => {
     playButton.textContent = "播放";
   });
-  const next = state.flat[state.index + 1];
-  if (next) fetch(`/api/audio/${next.hash}.mp3`);
+  const nextParagraph = state.flat.find((item) => item.paragraphHash !== clip.paragraphHash && state.flat.indexOf(item) > state.index);
+  if (nextParagraph) fetch(`/api/audio/${nextParagraph.paragraphHash}.mp3`);
   saveProgress();
 }
 
