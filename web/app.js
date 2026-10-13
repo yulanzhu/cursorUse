@@ -6,6 +6,8 @@ const title = document.querySelector("#title");
 const moduleName = document.querySelector("#module");
 const caption = document.querySelector("#caption");
 const playButton = document.querySelector("#play");
+const speedInput = document.querySelector("#speed");
+const speedValue = document.querySelector("#speed-value");
 const toc = document.querySelector("#toc");
 const sidebar = document.querySelector("#sidebar");
 
@@ -37,6 +39,21 @@ function renderToc() {
 
 function lessonIndex() {
   return course.lessons.findIndex((lesson) => lesson.id === state.lesson.id);
+}
+
+function currentRate() {
+  return Number(speedInput.value);
+}
+
+function showRate() {
+  const rate = currentRate();
+  speedValue.textContent = `${Number.isInteger(rate) ? rate.toFixed(0) : rate}×`;
+}
+
+function applyRate() {
+  if (state.audio) state.audio.playbackRate = currentRate();
+  localStorage.setItem("flutter-teacher-speed", String(currentRate()));
+  showRate();
 }
 
 function warm(lesson) {
@@ -81,7 +98,9 @@ function play() {
   caption.textContent = "正在准备这一节，准备好就连续讲完。";
   const audio = new Audio(`/api/audio/${lesson.narration.hash}.mp3`);
   audio.preload = "auto";
+  audio.playbackRate = currentRate();
   state.audio = audio;
+  playButton.courseAudio = audio;
   audio.addEventListener("playing", () => {
     caption.textContent = "正在连续讲这一节。";
     playButton.textContent = "暂停";
@@ -118,6 +137,8 @@ document.querySelector("#next-lesson").addEventListener("click", () => {
   if (next) openLesson(next.id, Boolean(state.audio && !state.audio.paused));
 });
 
+speedInput.addEventListener("input", applyRate);
+
 document.querySelector("#menu").addEventListener("click", () => sidebar.classList.toggle("open"));
 
 document.addEventListener("keydown", (event) => {
@@ -128,5 +149,8 @@ document.addEventListener("keydown", (event) => {
 });
 
 renderToc();
+const savedSpeed = Number(localStorage.getItem("flutter-teacher-speed"));
+if (savedSpeed >= 0.75 && savedSpeed <= 2) speedInput.value = String(savedSpeed);
+showRate();
 const saved = JSON.parse(localStorage.getItem("flutter-teacher-progress") || "null");
 openLesson(saved?.lessonId || course.lessons[0].id, false);

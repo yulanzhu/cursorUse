@@ -22,7 +22,17 @@ expect("总结不是口播稿", !summary.includes("省掉什么麻烦"));
 expect("页面没有测验", !body.includes("测验") && !body.includes("打分"));
 expect("没有一句一句的按钮", !body.includes("上一句") && !body.includes("说得简单点"));
 await page.click("#play");
-await page.waitForFunction(() => document.querySelector("#caption").textContent.includes("准备") || document.querySelector("#caption").textContent.includes("连续讲"), { timeout: 8000 });
+await page.waitForFunction(() => document.querySelector("#play").courseAudio && document.querySelector("#play").textContent === "暂停", { timeout: 20000 });
+const before = await page.evaluate(() => document.querySelector("#play").courseAudio.currentTime);
+await page.evaluate(() => {
+  const input = document.querySelector("#speed");
+  input.value = "1.5";
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+});
+const rate = await page.evaluate(() => document.querySelector("#play").courseAudio.playbackRate);
+const after = await page.evaluate(() => document.querySelector("#play").courseAudio.currentTime);
+expect("速度变成 1.5 倍", rate === 1.5);
+expect("改速度不重新开播", after >= before);
 expect("播放会连续讲", true);
 await page.click("#next-lesson");
 await page.waitForFunction(() => document.querySelector("#title").textContent.includes("Embedder"), { timeout: 8000 });
