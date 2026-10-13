@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flutter 讲堂</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@420;600&family=Noto+Serif+SC:wght@560;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside id="sidebar">
+      <div class="brand">
+        <span class="seal">讲</span>
+        <div>
+          <p class="brand-kicker">老师在讲</p>
+          <strong>Flutter 讲堂</strong>
+        </div>
+      </div>
+      <nav id="toc" aria-label="课程目录"></nav>
+    </aside>
+    <div class="reading">
+      <header class="lesson-head">
+        <button id="menu" type="button" class="menu">目录</button>
+        <p id="module" class="module"></p>
+        <h1 id="title"></h1>
+      </header>
+      <article id="summary" class="summary"></article>
+    </div>
+  </div>
+  <footer class="dock">
+    <div class="caption-row">
+      <span id="tone" class="tone"></span>
+      <p id="caption" class="caption">选一节，老师从开场讲起。</p>
+    </div>
+    <div class="transport">
+      <button type="button" id="prev-sentence" data-command="上一句">上一句</button>
+      <button type="button" id="play" class="play">播放</button>
+      <button type="button" id="next-sentence" data-command="下一句">下一句</button>
+      <button type="button" id="again" data-command="再说一遍">再说一遍</button>
+      <label class="speed">语速
+        <input id="speed" type="range" min="0.85" max="1.15" step="0.05" value="1">
+      </label>
+    </div>
+    <div class="jumps">
+      <button type="button" data-command="说得简单点">说得简单点</button>
+      <button type="button" data-command="专业一点">专业一点</button>
+      <button type="button" data-command="举个例子">举个例子</button>
+      <button type="button" data-command="再详细一点">再详细一点</button>
+      <button type="button" data-command="边界是什么">边界是什么</button>
+    </div>
+    <form id="ask-form" class="ask">
+      <button type="button" id="mic">按住说话</button>
+      <input id="ask" type="text" placeholder="让老师换种讲法，或就这节提问" autocomplete="off">
+      <button type="submit">发送</button>
+      <p id="heard" class="heard"></p>
+    </form>
+  </footer>
+  <script src="/course-data.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
