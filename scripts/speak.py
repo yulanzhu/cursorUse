@@ -86,35 +86,43 @@ def concat(paths: list[Path], dest: Path) -> None:
 
 
 async def synthesize_text(text: str, rate: str, pitch: str, dest: Path) -> None:
-    communicate = Communicate(text, VOICE, rate=rate, pitch=pitch)
+    communicate = Communicate(text, VOICE, rate=rate or "+0%", pitch=pitch or "+0Hz")
     await communicate.save(str(dest))
+
+
+def split_speech(text: str, limit: int = 420) -> list[str]:
+    """在句号处切开，避免一次请求太长，拼回去时也不插入静音。"""
+    if len(text) <= limit:
+        return [text]
+    pieces: list[str] = []
+    buf = ""
+    for char in text:
+        buf += char
+        if char in "。！？" and len(buf) >= limit:
+            pieces.append(buf)
+            buf = ""
+    if buf:
+        pieces.append(buf)
+    return pieces
 
 
 def synthesize_clip(clip: dict, dest: Path) -> None:
     dest.parent.mkdir(parents=True, exist_ok=True)
-    parts = clip["parts"]
+    text = ""
+    for part in clip["parts"]:
+        if isinstance(part, str):
+            text += part.strip()
+    text = text.strip()
+    if not text:
+        raise RuntimeError("这句话没有可合成的内容")
+    chunks = split_speech(text)
     with tempfile.TemporaryDirectory() as folder:
         folder_path = Path(folder)
         pieces: list[Path] = []
-        index = 0
-        for part in parts:
-            if isinstance(part, str):
-                text = part.strip()
-                if not text:
-                    continue
-                piece = folder_path / f"part-{index}.mp3"
-                asyncio.run(synthesize_text(text, clip["rate"], clip["pitch"], piece))
-                pieces.append(piece)
-            else:
-                pause = int(part)
-                if pause <= 0:
-                    continue
-                piece = folder_path / f"pause-{index}.mp3"
-                silence(pause, piece)
-                pieces.append(piece)
-            index += 1
-        if not pieces:
-            raise RuntimeError("这句话没有可合成的内容")
+        for index, chunk in enumerate(chunks):
+            piece = folder_path / f"part-{index}.mp3"
+            asyncio.run(synthesize_text(chunk, "+0%", "+0Hz", piece))
+            pieces.append(piece)
         concat(pieces, dest)
 
 

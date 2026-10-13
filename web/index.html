@@ -31,32 +31,12 @@
     </div>
   </div>
   <footer class="dock">
-    <div class="caption-row">
-      <span id="tone" class="tone"></span>
-      <p id="caption" class="caption">选一节，老师从开场讲起。</p>
-    </div>
+    <p id="caption" class="caption">点播放，老师会把这一节连续讲完。</p>
     <div class="transport">
-      <button type="button" id="prev-sentence" data-command="上一句">上一句</button>
+      <button type="button" id="prev-lesson">上一节</button>
       <button type="button" id="play" class="play">播放</button>
-      <button type="button" id="next-sentence" data-command="下一句">下一句</button>
-      <button type="button" id="again" data-command="再说一遍">再说一遍</button>
-      <label class="speed">语速
-        <input id="speed" type="range" min="0.85" max="1.15" step="0.05" value="1">
-      </label>
+      <button type="button" id="next-lesson">下一节</button>
     </div>
-    <div class="jumps">
-      <button type="button" data-command="说得简单点">说得简单点</button>
-      <button type="button" data-command="专业一点">专业一点</button>
-      <button type="button" data-command="举个例子">举个例子</button>
-      <button type="button" data-command="再详细一点">再详细一点</button>
-      <button type="button" data-command="边界是什么">边界是什么</button>
-    </div>
-    <form id="ask-form" class="ask">
-      <button type="button" id="mic">按住说话</button>
-      <input id="ask" type="text" placeholder="让老师换种讲法，或就这节提问" autocomplete="off">
-      <button type="submit">发送</button>
-      <p id="heard" class="heard"></p>
-    </form>
   </footer>
   <script src="/course-data.js"></script>
   <script src="/app.js"></script>

@@ -16,7 +16,7 @@ const TONES = {
   问句: { rate: "-2%", pitch: "+1Hz" },
   收束: { rate: "-4%", pitch: "+0Hz" },
 };
-const PARAGRAPH_VOICE = { rate: "-3%", pitch: "+0Hz" };
+const PARAGRAPH_VOICE = { rate: "+0%", pitch: "+0Hz" };
 const SECTIONS = ["开场", "专业讲解", "大白话", "怎么用", "再讲深一点", "边界", "收束"];
 const SECTION_JUMP = {
   说得简单点: "大白话",
@@ -273,6 +273,23 @@ function makeParagraph(clips) {
   };
 }
 
+function makeNarration(paragraphs) {
+  const joined = SECTIONS.map((name) => paragraphs[name]?.text || "").join("");
+  const ssml =
+    `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='zh-CN'>` +
+    `<voice name='${voice}'><prosody rate='+0%' pitch='+0Hz'>${escapeXml(joined)}</prosody></voice></speak>`;
+  return {
+    hash: hashOf(`narration\n${ssml}`),
+    text: joined,
+    tone: "平稳",
+    pause: 0,
+    ssml,
+    rate: "+0%",
+    pitch: "+0Hz",
+    parts: [joined, 0],
+  };
+}
+
 function hashOf(ssml) {
   return crypto.createHash("sha256").update(ssml).digest("hex").slice(0, 20);
 }
@@ -525,6 +542,7 @@ function buildLesson(file, text, lexicon) {
       summaryText: blocks.summary,
       sections,
       paragraphs,
+      narration: makeNarration(paragraphs),
       sectionOrder: SECTIONS,
       questions: questionClips,
       hint: hintCompiled.clip,
@@ -598,6 +616,7 @@ function main() {
     }
     for (const clip of lesson.questions) clips[clip.hash] = clip;
     clips[lesson.hint.hash] = lesson.hint;
+    if (lesson.narration) clips[lesson.narration.hash] = lesson.narration;
   }
   const course = { voice, sectionJump: SECTION_JUMP, lessons, clips };
   fs.mkdirSync(webDir, { recursive: true });
