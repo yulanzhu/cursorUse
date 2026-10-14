@@ -1,0 +1,102 @@
+# 标识符怎么读。先查 words，没有再把驼峰、下划线拆成英文单词。
+# 全大写或命中 acronyms 的片段按字母或规定读法读。
+
+acronyms:
+  API: A P I
+  UI: U I
+  IO: I O
+  FFI: F F I
+  AOT: A O T
+  URL: U R L
+  URI: U R I
+  HTTP: H T T P
+  HTTPS: H T T P S
+  JSON: JAY son
+  SDK: S D K
+  IDE: I D E
+  GPU: G P U
+  CPU: C P U
+  APK: A P K
+  IPA: I P A
+  ABI: A B I
+  SSL: S S L
+  SQL: S Q L
+  HTML: H T M L
+  CSS: C S S
+  XML: X M L
+  DOM: D O M
+  CI: C I
+  RGB: R G B
+  VM: V M
+  GC: G C
+  ARB: A R B
+  TTS: T T S
+  SSML: S S M L
+
+words:
+  "==": double equals
+  iOS: I O S
+  ios: I O S
+  vsync: v sync
+  Bloc: block
+  bloc: block
+  Cubit: cue bit
+  yaml: yam ell
+  YAML: yam ell
+  pubspec: pub spec
+  pubspec.yaml: pub spec yam ell
+  analysis_options.yaml: analysis options yam ell
+  dart-define: dart define
+  Engine: en jin
+  engine: en jin
+  Embedder: embed der
+  embedder: embed der
+  Isolate: eye so late
+  isolate: eye so late
+  Impeller: im peller
+  Skia: skee a
+  skia: skee a
+  Riverpod: river pod
+  Pigeon: pid jin
+  Scaffold: scaf fold
+  scaffold: scaf fold
+  Flutter: flutter
+  Dart: dart
+  Widget: widget
+  Android: android
+  Kotlin: kotlin
+  Swift: swift
+  Gradle: gradle
+  Xcode: X code
+  Material: material
+  Cupertino: cupertino
+  Navigator: navigator
+  Overlay: overlay
+  Semantics: semantics
+  Layer: layer
+  Element: element
+  State: state
+  Key: key
+  Theme: theme
+  Hero: hero
+  Isolate: isolate
+  Future: future
+  Stream: stream
+  Zone: zone
+  mixin: mixin
+  Mixins: mixins
+  extension: extension
+  sealed: sealed
+  async: async
+  await: await
+  main: main
+  build: build
+  const: const
+  final: final
+  late: late
+  var: var
+  null: null
+  true: true
+  false: false
+  hot reload: hot reload
+  hot restart: hot restart

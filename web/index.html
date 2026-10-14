@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flutter 讲堂</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@420;600&family=Noto+Serif+SC:wght@560;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside id="sidebar">
+      <div class="brand">
+        <span class="seal">讲</span>
+        <div>
+          <p class="brand-kicker">老师在讲</p>
+          <strong>Flutter 讲堂</strong>
+        </div>
+      </div>
+      <nav id="toc" aria-label="课程目录"></nav>
+    </aside>
+    <div class="reading">
+      <header class="lesson-head">
+        <button id="menu" type="button" class="menu">目录</button>
+        <p id="module" class="module"></p>
+        <h1 id="title"></h1>
+      </header>
+      <article id="summary" class="summary"></article>
+    </div>
+  </div>
+  <footer class="dock">
+    <p id="caption" class="caption">点播放，老师会把这一节连续讲完。</p>
+    <div class="transport">
+      <button type="button" id="prev-lesson">上一节</button>
+      <button type="button" id="play" class="play">播放</button>
+      <button type="button" id="next-lesson">下一节</button>
+      <label class="speed">速度
+        <input id="speed" type="range" min="0.75" max="2" step="0.25" value="1" aria-label="播放速度">
+        <span id="speed-value">1×</span>
+      </label>
+    </div>
+  </footer>
+  <script src="/course-data.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

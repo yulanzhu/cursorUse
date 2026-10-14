@@ -1,0 +1,260 @@
+# 多音字词表。words 的拼音个数必须和字数一致。
+# 更长的词优先。defaults 只兜住单字，而且只给教学里最常见的那个音。
+
+defaults:
+  了: le5
+  得: de5
+  地: de5
+  还: hai2
+
+words:
+  了解: liao3 jie3
+  了不起: liao3 bu4 qi3
+  了断: liao3 duan4
+  为了: wei4 le5
+  为了让: wei4 le5 rang4
+  受不了: shou4 bu4 liao3
+  没完没了: mei2 wan2 mei2 liao3
+  还是: hai2 shi4
+  还有: hai2 you3
+  还要: hai2 yao4
+  还可以: hai2 ke3 yi3
+  还好: hai2 hao3
+  还会: hai2 hui4
+  还会把: hai2 hui4 ba3
+  还原: huan2 yuan2
+  归还: gui1 huan2
+  偿还: chang2 huan2
+  退还: tui4 huan2
+  为什么: wei4 shen2 me5
+  因为: yin1 wei4
+  作为: zuo4 wei2
+  成为: cheng2 wei2
+  认为: ren4 wei2
+  称为: cheng1 wei2
+  为何: wei4 he2
+  为主: wei2 zhu3
+  人为: ren2 wei2
+  行为: xing2 wei2
+  以为: yi3 wei2
+  极为: ji2 wei2
+  很为: hen3 wei2
+  特为: te4 wei4
+  为的是: wei4 de5 shi4
+  很长: hen3 chang2
+  长度: chang2 du4
+  长期: chang2 qi2
+  长列表: chang2 lie4 biao3
+  长按: chang2 an4
+  成长: cheng2 zhang3
+  长大: zhang3 da4
+  增长: zeng1 zhang3
+  长处: chang2 chu4
+  擅长: shan4 chang2
+  延长: yan2 chang2
+  家长: jia1 zhang3
+  长方形: chang2 fang1 xing2
+  长文: chang2 wen2
+  长句: chang2 ju4
+  长任务: chang2 ren4 wu4
+  得到: de2 dao4
+  获得: huo4 de2
+  得意: de2 yi4
+  值得: zhi2 de2
+  记得: ji4 de5
+  觉得: jue2 de5
+  显得: xian3 de5
+  认得: ren4 de5
+  不得了: bu4 de2 liao3
+  不得不: bu4 de2 bu4
+  取得: qu3 de2
+  赢得: ying2 de2
+  你得: ni3 dei3
+  得先: dei3 xian1
+  得把: dei3 ba3
+  慢慢地: man4 man4 de5
+  具体地: ju4 ti3 de5
+  真正地: zhen1 zheng4 de5
+  简单地: jian3 dan1 de5
+  直接地: zhi2 jie1 de5
+  当地: dang1 di4
+  地方: di4 fang1
+  地点: di4 dian3
+  地图: di4 tu2
+  地位: di4 wei4
+  地面: di4 mian4
+  目的地: mu4 di4 di4
+  质地: zhi4 di4
+  差别: cha1 bie2
+  差异: cha1 yi4
+  差距: cha1 ju4
+  差不多: cha4 bu4 duo1
+  误差: wu4 cha1
+  偏差: pian1 cha1
+  差点: cha4 dian3
+  相差: xiang1 cha1
+  差一点: cha4 yi1 dian3
+  调整: tiao2 zheng3
+  调试: tiao2 shi4
+  调节: tiao2 jie2
+  调色: tiao2 se4
+  音调: yin1 diao4
+  调子: diao4 zi5
+  强调: qiang2 diao4
+  调度: diao4 du4
+  回调: hui2 diao4
+  调用: diao4 yong4
+  调查: diao4 cha2
+  单调: dan1 diao4
+  协调: xie2 tiao2
+  数字: shu4 zi4
+  数据: shu4 ju4
+  数量: shu4 liang4
+  数学: shu4 xue2
+  次数: ci4 shu4
+  数不清: shu3 bu4 qing1
+  数一数: shu3 yi1 shu4
+  多数: duo1 shu4
+  大多数: da4 duo1 shu4
+  少数: shao3 shu4
+  函数: han2 shu4
+  参数: can1 shu4
+  计数: ji4 shu4
+  数值: shu4 zhi2
+  数组: shu4 zu3
+  个数: ge4 shu4
+  数数: shu3 shu4
+  传递: chuan2 di4
+  传入: chuan2 ru4
+  传出: chuan2 chu1
+  传说: chuan2 shuo1
+  传播: chuan2 bo1
+  传承: chuan2 cheng2
+  宣传: xuan1 chuan2
+  传记: zhuan4 ji4
+  自传: zi4 zhuan4
+  传输: chuan2 shu1
+  上传: shang4 chuan2
+  下载: xia4 zai4
+  处理: chu3 li3
+  到处: dao4 chu4
+  好处: hao3 chu4
+  坏处: huai4 chu4
+  用处: yong4 chu4
+  处在: chu3 zai4
+  地处: di4 chu4
+  某处: mou3 chu4
+  处处: chu4 chu4
+  处分: chu3 fen4
+  相处: xiang1 chu3
+  处事: chu3 shi4
+  音乐: yin1 yue4
+  快乐: kuai4 le4
+  乐观: le4 guan1
+  乐趣: le4 qu4
+  乐于: le4 yu2
+  乐器: yue4 qi4
+  乐谱: yue4 pu3
+  干活: gan4 huo2
+  干燥: gan1 zao4
+  干净: gan1 jing4
+  干涉: gan1 she4
+  干预: gan1 yu4
+  树干: shu4 gan4
+  才干: cai2 gan4
+  干嘛: gan4 ma2
+  干什么: gan4 shen2 me5
+  骨干: gu3 gan4
+  干线: gan4 xian4
+  下降: xia4 jiang4
+  降落: jiang4 luo4
+  降低: jiang4 di1
+  降温: jiang4 wen1
+  降级: jiang4 ji2
+  投降: tou2 xiang2
+  强大: qiang2 da4
+  强制: qiang2 zhi4
+  强度: qiang2 du4
+  增强: zeng1 qiang2
+  坚强: jian1 qiang2
+  勉强: mian3 qiang3
+  强迫: qiang3 po4
+  强求: qiang3 qiu2
+  强行: qiang2 xing2
+  空白: kong4 bai2
+  空气: kong1 qi4
+  空格: kong4 ge2
+  空的: kong1 de5
+  空闲: kong4 xian2
+  空值: kong1 zhi2
+  空安全: kong1 an1 quan2
+  腾空: teng2 kong1
+  空间: kong1 jian1
+  空指针: kong1 zhi3 zhen1
+  没空: mei2 kong4
+  空字符串: kong1 zi4 fu2 chuan4
+  凭空: ping2 kong1
+  空着: kong1 zhe5
+  空列表: kong1 lie4 biao3
+  蒙蔽: meng2 bi4
+  启蒙: qi3 meng2
+  蒙混: meng2 hun4
+  执行: zhi2 xing2
+  运行: yun4 xing2
+  行走: xing2 zou3
+  行为: xing2 wei2
+  行高: hang2 gao1
+  一行: yi1 hang2
+  这一行: zhe4 yi1 hang2
+  这行: zhe4 hang2
+  哪一行: na3 yi1 hang2
+  银行: yin2 hang2
+  行业: hang2 ye4
+  行列: hang2 lie4
+  行不行: xing2 bu4 xing2
+  不行: bu4 xing2
+  行吗: xing2 ma5
+  就行: jiu4 xing2
+  也行: ye3 xing2
+  平行: ping2 xing2
+  举行: ju3 xing2
+  流行: liu2 xing2
+  行程: xing2 cheng2
+  行人: xing2 ren2
+  行动: xing2 dong4
+  发行: fa1 xing2
+  进行: jin4 xing2
+  可行: ke3 xing2
+  例行: li4 xing2
+  行内: hang2 nei4
+  换行: huan4 hang2
+  排行: pai2 hang2
+  行距: hang2 ju4
+  同行: tong2 hang2
+  另行: ling4 xing2
+  重写: zhong4 xie1
+  重建: zhong4 jian4
+  重绘: zhong4 hui4
+  重来: chong2 lai2
+  重新: chong2 xin1
+  重复: chong2 fu4
+  重试: chong2 shi4
+  重载: chong2 zai4
+  热重载: re4 chong2 zai4
+  重要: zhong4 yao4
+  重视: zhong4 shi4
+  重量: zhong4 liang4
+  重心: zhong4 xin1
+  沉重: chen2 zhong4
+  加重: jia1 zhong4
+  重音: zhong4 yin1
+  重活: zhong4 huo2
+  重排: chong2 pai2
+  重叠: chong2 die2
+  重用: chong2 yong4
+  重力: zhong4 li4
+  重担: zhong4 dan4
+  重做: chong2 zuo4
+  重跑: chong2 pao3
+  重画: chong2 hua4
+  重算: chong2 suan4

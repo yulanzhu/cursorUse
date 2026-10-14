@@ -1,0 +1,157 @@
+:root {
+  --paper: #f4ecdc;
+  --paper-deep: #e7dcc6;
+  --ink: #221c17;
+  --muted: #6d6256;
+  --seal: #9c2f2a;
+  --sidebar: #241c17;
+  --sidebar-text: #f3eadc;
+  --line: rgba(34, 28, 23, 0.12);
+  --serif: "Noto Serif SC", "Songti SC", "WenQuanYi Micro Hei", serif;
+  --sans: "Noto Sans SC", "WenQuanYi Micro Hei", sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background:
+    radial-gradient(circle at top left, rgba(156, 47, 42, 0.08), transparent 28%),
+    var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100%;
+  padding-bottom: 120px;
+}
+
+aside {
+  background: var(--sidebar);
+  color: var(--sidebar-text);
+  padding: 28px 18px 40px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: auto;
+}
+
+.brand { display: flex; gap: 12px; align-items: center; margin-bottom: 28px; }
+.seal {
+  width: 42px; height: 42px;
+  display: grid; place-items: center;
+  border: 2px solid var(--seal);
+  color: #f0c7c3;
+  font-family: var(--serif);
+  font-size: 22px;
+}
+.brand-kicker { margin: 0; letter-spacing: 0.18em; font-size: 12px; color: #c8b8a4; }
+.brand strong { font-family: var(--serif); font-size: 22px; }
+
+.module-block { margin: 18px 0 8px; }
+.module-block h2 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: #d7c3ab;
+  font-weight: 600;
+}
+.toc-button {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: inherit;
+  border: 0;
+  border-left: 2px solid transparent;
+  padding: 8px 10px;
+  cursor: pointer;
+  font: inherit;
+}
+.toc-button.current { border-left-color: var(--seal); color: white; }
+.toc-button:hover { background: rgba(255,255,255,0.04); }
+
+.reading { padding: 42px 8vw 20px; max-width: 920px; }
+.lesson-head { margin-bottom: 18px; }
+.module { margin: 0; color: var(--seal); letter-spacing: 0.14em; font-size: 13px; }
+h1 { font-family: var(--serif); font-size: 40px; line-height: 1.25; margin: 8px 0 0; }
+.menu { display: none; }
+
+.summary {
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.85;
+}
+.summary h2, .summary h3 { font-size: 22px; margin: 28px 0 8px; }
+.summary ul { padding-left: 1.2em; }
+.summary li { margin: 6px 0; }
+.summary p { margin: 10px 0; }
+.summary code {
+  font-family: "IBM Plex Mono", "Source Code Pro", ui-monospace, monospace;
+  font-size: 0.86em;
+  background: rgba(34, 28, 23, 0.06);
+  padding: 0 4px;
+}
+.summary pre {
+  background: #2a231e;
+  color: #f6efe4;
+  padding: 16px 18px;
+  overflow: auto;
+  border-radius: 2px;
+}
+.summary pre code { background: transparent; color: inherit; padding: 0; }
+.summary [data-section].is-current {
+  box-shadow: inset 3px 0 0 var(--seal);
+  background: rgba(156, 47, 42, 0.06);
+}
+
+.dock {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: rgba(244, 236, 220, 0.96);
+  border-top: 1px solid var(--line);
+  padding: 12px 22px 16px;
+  backdrop-filter: blur(8px);
+}
+.caption-row { display: flex; gap: 10px; align-items: baseline; min-height: 28px; }
+.tone {
+  flex: none;
+  color: var(--seal);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+}
+.caption { margin: 0; color: var(--muted); font-size: 14px; }
+.transport, .jumps, .ask { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+button, input {
+  font: inherit;
+}
+button {
+  background: transparent;
+  border: 1px solid rgba(34, 28, 23, 0.25);
+  color: var(--ink);
+  padding: 7px 12px;
+  cursor: pointer;
+}
+button:hover { border-color: var(--ink); }
+.play { background: var(--seal); color: #fff8f2; border-color: var(--seal); min-width: 84px; }
+.speed { font-size: 13px; color: var(--muted); display: flex; gap: 8px; align-items: center; }
+.ask input { flex: 1; min-width: 180px; padding: 8px 10px; border: 1px solid rgba(34, 28, 23, 0.25); background: white; }
+.heard { margin: 0; width: 100%; color: var(--muted); font-size: 13px; min-height: 1.2em; }
+#mic.live { background: var(--seal); color: white; }
+
+@media (max-width: 860px) {
+  .shell { grid-template-columns: 1fr; }
+  aside {
+    position: fixed;
+    z-index: 3;
+    transform: translateX(-105%);
+    transition: transform 0.2s ease;
+    width: min(84vw, 320px);
+  }
+  aside.open { transform: none; }
+  .menu { display: inline-block; margin-bottom: 8px; }
+  h1 { font-size: 30px; }
+  .reading { padding: 24px 18px 20px; }
+  .shell { padding-bottom: 140px; }
+}
