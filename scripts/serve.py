@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import mimetypes
+import socket
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -77,10 +78,16 @@ def pump() -> None:
 
 
 class Handler(BaseHTTPRequestHandler):
+    protocol_version = "HTTP/1.1"
     course = None
 
     def log_message(self, fmt: str, *args) -> None:
         print(f"[{self.address_string()}] {fmt % args}")
+
+    def end_headers(self) -> None:
+        self.send_header("Connection", "close")
+        self.close_connection = True
+        super().end_headers()
 
     def course_data(self) -> dict:
         if Handler.course is None:
@@ -93,7 +100,9 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", content_type or mimetypes.guess_type(path.name)[0] or "application/octet-stream")
         self.send_header("Content-Length", str(len(data)))
         self.send_header("Cache-Control", "no-cache")
+        self.send_header("Connection", "close")
         self.end_headers()
+        self.close_connection = True
         try:
             self.wfile.write(data)
         except BrokenPipeError:
@@ -162,6 +171,15 @@ class Handler(BaseHTTPRequestHandler):
         self.send_file(file_path)
 
 
+class Server(ThreadingHTTPServer):
+    address_family = socket.AF_INET6
+    allow_reuse_address = True
+
+    def server_bind(self) -> None:
+        self.socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
+        super().server_bind()
+
+
 def main() -> None:
     if not COURSE.exists():
         raise SystemExit("还没有 course-data.json，先运行 node scripts/build-course.mjs")
@@ -170,9 +188,8 @@ def main() -> None:
     threading.Thread(target=pump, daemon=True).start()
     for lesson in course["lessons"]:
         prepare(lesson["narration"])
-    ThreadingHTTPServer.allow_reuse_address = True
-    server = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
-    print(f"课程已打开：http://127.0.0.1:{PORT}", flush=True)
+    server = Server(("::", PORT), Handler)
+    print(f"课程已打开：http://127.0.0.1:{PORT} 和 http://[::1]:{PORT}", flush=True)
     server.serve_forever()
 
 

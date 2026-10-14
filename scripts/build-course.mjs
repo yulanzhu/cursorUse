@@ -621,7 +621,17 @@ function main() {
   const course = { voice, sectionJump: SECTION_JUMP, lessons, clips };
   fs.mkdirSync(webDir, { recursive: true });
   fs.writeFileSync(path.join(webDir, "course-data.json"), JSON.stringify(course));
-  fs.writeFileSync(path.join(webDir, "course-data.js"), `window.COURSE = ${JSON.stringify(course)};\n`);
+  const browserCourse = {
+    lessons: lessons.map((lesson) => ({
+      id: lesson.id,
+      module: lesson.module,
+      title: lesson.title,
+      order: lesson.order,
+      summaryHtml: lesson.summaryHtml,
+      narration: { hash: lesson.narration.hash },
+    })),
+  };
+  fs.writeFileSync(path.join(webDir, "course-data.js"), `window.COURSE = ${JSON.stringify(browserCourse)};\n`);
   fs.writeFileSync(path.join(root, "course/curriculum.md"), curriculumMarkdown(lessons));
   const sample = Object.values(clips).map((clip) => clip.ssml);
   const joined = sample.join("\n");
