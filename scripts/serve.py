@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import json
 import mimetypes
-import socket
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -171,15 +170,6 @@ class Handler(BaseHTTPRequestHandler):
         self.send_file(file_path)
 
 
-class Server(ThreadingHTTPServer):
-    address_family = socket.AF_INET6
-    allow_reuse_address = True
-
-    def server_bind(self) -> None:
-        self.socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
-        super().server_bind()
-
-
 def main() -> None:
     if not COURSE.exists():
         raise SystemExit("还没有 course-data.json，先运行 node scripts/build-course.mjs")
@@ -188,8 +178,11 @@ def main() -> None:
     threading.Thread(target=pump, daemon=True).start()
     for lesson in course["lessons"]:
         prepare(lesson["narration"])
-    server = Server(("::", PORT), Handler)
-    print(f"课程已打开：http://127.0.0.1:{PORT} 和 http://[::1]:{PORT}", flush=True)
+    ThreadingHTTPServer.allow_reuse_address = True
+    # 必须听在 IPv4 0.0.0.0。Cursor 只转发 /proc/net/tcp 里的端口；
+    # 只听 IPv6 时，你电脑上的 127.0.0.1:4173 会连接被拒绝。
+    server = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
+    print(f"课程已打开：http://127.0.0.1:{PORT}", flush=True)
     server.serve_forever()
 
 
