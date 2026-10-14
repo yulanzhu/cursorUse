@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""打开课程页面，并在第一次听到某句时合成老师的声音。"""
+"""打开课程页面。声音在后台准备，请求不会一直挂着。"""
 
 from __future__ import annotations
 
@@ -8,15 +8,20 @@ import mimetypes
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from queue import Empty, Queue
 from urllib.parse import unquote, urlparse
 
-from speak import CACHE, COURSE, ensure_clip, load_course
+from speak import CACHE, COURSE, clip_path, ensure_clip, load_course
 
 ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT / "web"
 PORT = 4173
 LOCKS: dict[str, threading.Lock] = {}
 GUARD = threading.Lock()
+QUEUED: set[str] = set()
+ERRORS: dict[str, str] = {}
+URGENT: Queue = Queue()
+BACKGROUND: Queue = Queue()
 
 
 def lock_for(digest: str) -> threading.Lock:
@@ -24,6 +29,51 @@ def lock_for(digest: str) -> threading.Lock:
         if digest not in LOCKS:
             LOCKS[digest] = threading.Lock()
         return LOCKS[digest]
+
+
+def ready_path(digest: str) -> Path | None:
+    path = clip_path(digest)
+    if path.exists() and path.stat().st_size > 0:
+        return path
+    return None
+
+
+def run_clip(clip: dict) -> None:
+    digest = clip["hash"]
+    try:
+        with lock_for(digest):
+            if ready_path(digest) is None:
+                ensure_clip(clip)
+        ERRORS.pop(digest, None)
+    except Exception as error:  # noqa: BLE001
+        ERRORS[digest] = str(error)
+    finally:
+        with GUARD:
+            QUEUED.discard(digest)
+
+
+def prepare(clip: dict, urgent: bool = False) -> None:
+    digest = clip["hash"]
+    with GUARD:
+        if ready_path(digest):
+            return
+        if digest not in QUEUED:
+            QUEUED.add(digest)
+            (URGENT if urgent else BACKGROUND).put(clip)
+        elif urgent:
+            URGENT.put(clip)
+
+
+def pump() -> None:
+    while True:
+        try:
+            clip = URGENT.get_nowait()
+        except Empty:
+            try:
+                clip = BACKGROUND.get(timeout=0.3)
+            except Empty:
+                continue
+        run_clip(clip)
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -59,20 +109,39 @@ class Handler(BaseHTTPRequestHandler):
             digest = path.removeprefix("/api/audio/").removesuffix(".mp3")
             clip = self.course_data()["clips"].get(digest)
             if clip is None:
-                self.send_error(404, "没有这一句")
+                self.send_error(404, "没有这一节")
                 return
-            try:
-                with lock_for(digest):
-                    audio = ensure_clip(clip)
-            except Exception as error:  # noqa: BLE001
+            audio = ready_path(digest)
+            if audio is not None:
+                self.send_file(audio, "audio/mpeg")
+                return
+            error = ERRORS.get(digest)
+            if error and digest not in QUEUED:
+                ERRORS.pop(digest, None)
                 message = f"合成失败：{error}".encode("utf-8")
                 self.send_response(502)
                 self.send_header("Content-Type", "text/plain; charset=utf-8")
                 self.send_header("Content-Length", str(len(message)))
+                self.send_header("Connection", "close")
                 self.end_headers()
-                self.wfile.write(message)
+                try:
+                    self.wfile.write(message)
+                except BrokenPipeError:
+                    return
                 return
-            self.send_file(audio, "audio/mpeg")
+            prepare(clip, urgent=True)
+            body = b'{"ready":false}'
+            self.send_response(202)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Retry-After", "1")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Connection", "close")
+            self.end_headers()
+            try:
+                self.wfile.write(body)
+            except BrokenPipeError:
+                return
             return
         if path == "/api/health":
             body = json.dumps(
@@ -96,8 +165,14 @@ class Handler(BaseHTTPRequestHandler):
 def main() -> None:
     if not COURSE.exists():
         raise SystemExit("还没有 course-data.json，先运行 node scripts/build-course.mjs")
+    course = load_course()
+    Handler.course = course
+    threading.Thread(target=pump, daemon=True).start()
+    for lesson in course["lessons"]:
+        prepare(lesson["narration"])
+    ThreadingHTTPServer.allow_reuse_address = True
     server = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
-    print(f"课程已打开：http://127.0.0.1:{PORT}")
+    print(f"课程已打开：http://127.0.0.1:{PORT}", flush=True)
     server.serve_forever()
 
 

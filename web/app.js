@@ -58,7 +58,18 @@ function applyRate() {
 
 function warm(lesson) {
   if (!lesson) return;
-  fetch(`/api/audio/${lesson.narration.hash}.mp3`).catch(() => {});
+  fetch(`/api/audio/${lesson.narration.hash}.mp3`, { cache: "no-store" }).catch(() => {});
+}
+
+async function whenReady(hash) {
+  const url = `/api/audio/${hash}.mp3`;
+  for (;;) {
+    const response = await fetch(url, { cache: "no-store" });
+    const type = response.headers.get("content-type") || "";
+    if (response.ok && type.includes("audio")) return url;
+    if (response.status === 502) throw new Error(await response.text());
+    await new Promise((resolve) => setTimeout(resolve, 700));
+  }
 }
 
 function stopAudio() {
@@ -87,7 +98,7 @@ function openLesson(id, autoplay) {
   if (autoplay) play();
 }
 
-function play() {
+async function play() {
   const lesson = state.lesson;
   if (state.audio && !state.audio.ended && state.audio.paused && state.audio.currentTime > 0) {
     state.audio.play();
@@ -96,7 +107,19 @@ function play() {
   }
   stopAudio();
   caption.textContent = "正在准备这一节，准备好就连续讲完。";
-  const audio = new Audio(`/api/audio/${lesson.narration.hash}.mp3`);
+  const token = {};
+  state.token = token;
+  let url;
+  try {
+    url = await whenReady(lesson.narration.hash);
+  } catch (error) {
+    if (state.token !== token) return;
+    caption.textContent = "这一节没有准备好。";
+    playButton.textContent = "播放";
+    return;
+  }
+  if (state.token !== token) return;
+  const audio = new Audio(url);
   audio.preload = "auto";
   audio.playbackRate = currentRate();
   state.audio = audio;
@@ -110,7 +133,7 @@ function play() {
     playButton.textContent = "播放";
   });
   audio.addEventListener("error", () => {
-    caption.textContent = "这一节没有准备好。看一下终端里的原因。";
+    caption.textContent = "这一节没有准备好。";
     playButton.textContent = "播放";
   });
   audio.play().catch(() => {
