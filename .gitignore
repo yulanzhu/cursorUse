@@ -1,0 +1,5 @@
+node_modules/
+.tts-cache/
+__pycache__/
+*.part
+.DS_Store

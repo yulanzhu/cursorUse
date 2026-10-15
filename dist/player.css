@@ -1,0 +1,238 @@
+:root {
+  color-scheme: light;
+  --paper: #f4eee4;
+  --paper-2: #e7dece;
+  --ink: #1d1914;
+  --muted: #655d52;
+  --sidebar: #17211e;
+  --sidebar-ink: #f7f1e6;
+  --sidebar-dim: #b7c2ba;
+  --line: rgba(29, 25, 20, 0.12);
+  --accent: #d85a1a;
+  --teal: #1d6f61;
+  --stage: #121a22;
+  --danger-bg: #f8e4dc;
+  --danger: #7d2c18;
+  --ok: #1f7a56;
+  --shadow: 0 16px 40px rgba(48, 32, 12, 0.1);
+  font-family: "Avenir Next", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--paper); color: var(--ink); }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.app {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  height: 100vh;
+  min-height: 640px;
+}
+
+.catalog {
+  background: var(--sidebar);
+  color: var(--sidebar-ink);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.brand { padding: 22px 20px 12px; border-bottom: 1px solid rgba(247, 241, 230, 0.08); }
+.brand h1, .titles h2, .segment h3 {
+  font-family: "Iowan Old Style", Palatino, "Songti SC", "Noto Serif SC", serif;
+  font-weight: 640;
+  letter-spacing: 0.01em;
+}
+.brand h1 { margin: 0; font-size: 32px; }
+.eyebrow {
+  margin: 0 0 4px;
+  color: #e7a27a;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+#progress-label { margin: 10px 0 0; color: var(--sidebar-dim); font-size: 14px; }
+#catalog-nav { overflow: auto; padding: 8px 10px 28px; }
+.module-block { margin-top: 14px; }
+.module-name {
+  margin: 0 8px 6px;
+  color: var(--sidebar-dim);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+.lesson-link {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  text-align: left;
+  color: var(--sidebar-ink);
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+.lesson-link:hover { background: rgba(247, 241, 230, 0.06); }
+.lesson-link.is-current { background: #f4eee4; color: var(--ink); }
+.lesson-link .mark {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  border: 1.5px solid rgba(247, 241, 230, 0.35);
+  border-radius: 50%;
+}
+.lesson-link.is-current .mark { border-color: var(--accent); }
+.lesson-link.is-done .mark {
+  background: var(--ok);
+  border-color: var(--ok);
+  box-shadow: inset 0 0 0 3px var(--sidebar);
+}
+.lesson-link.is-current.is-done .mark { box-shadow: inset 0 0 0 3px #f4eee4; }
+.lesson-name { font-size: 14px; line-height: 1.4; }
+
+.lesson {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto auto minmax(260px, 34vh) minmax(0, 1fr) auto;
+}
+.topbar {
+  display: flex;
+  gap: 16px;
+  align-items: end;
+  justify-content: space-between;
+  padding: 18px 22px 10px;
+}
+.titles h2 { margin: 0; font-size: 30px; line-height: 1.2; }
+.lesson .eyebrow { color: var(--teal); }
+.segment-count { margin: 0; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.banner {
+  margin: 0 22px 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.banner[hidden] { display: none; }
+
+.stage {
+  margin: 0 22px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(232, 162, 122, 0.16), transparent 28%),
+    var(--stage);
+  border-radius: 18px;
+  min-height: 260px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.transcript { overflow: auto; padding: 14px 22px 8px; }
+.segment {
+  margin: 0 0 8px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+}
+.jump {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  text-align: left;
+  color: inherit;
+  background: transparent;
+  border: 0;
+}
+.segment.is-active {
+  background: white;
+  border-color: rgba(216, 90, 26, 0.25);
+  box-shadow: 0 8px 24px rgba(48, 32, 12, 0.06);
+}
+.role { color: var(--teal); font-size: 13px; font-weight: 650; }
+.segment p { margin: 0; line-height: 1.65; }
+.segment pre {
+  margin: 8px 0 0 104px;
+  padding: 12px;
+  overflow: auto;
+  background: #241c16;
+  color: #f6efe4;
+  border-radius: 10px;
+  position: relative;
+}
+.segment code { font-family: "IBM Plex Mono", "Source Code Pro", ui-monospace, monospace; font-size: 13px; }
+.copy {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: 0;
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: #f4eee4;
+  color: var(--ink);
+}
+.tok-k { color: #f0b429; }
+.tok-s { color: #9ddeb5; }
+.tok-c { color: #b7aea3; }
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 22px 16px;
+  border-top: 1px solid var(--line);
+  background: rgba(244, 238, 228, 0.94);
+}
+.transport, .speeds, .lesson-nav { display: flex; gap: 8px; align-items: center; }
+.controls button {
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 8px 14px;
+}
+.controls button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.play {
+  background: var(--accent) !important;
+  color: white !important;
+  border-color: var(--accent) !important;
+  min-width: 88px;
+  font-weight: 680;
+}
+.controls button:disabled { opacity: 0.4; cursor: not-allowed; }
+.nav-note { margin: 0 0 0 6px; color: var(--accent); font-weight: 680; min-height: 1.2em; }
+.text-button {
+  border: 1px solid rgba(247, 241, 230, 0.2);
+  background: transparent;
+  color: inherit;
+  border-radius: 999px;
+  padding: 6px 10px;
+}
+.mobile-only { display: none; }
+
+@media (max-width: 900px) {
+  .app { grid-template-columns: 1fr; }
+  .mobile-only { display: inline-flex; }
+  .catalog {
+    position: fixed;
+    z-index: 3;
+    inset: 0 auto 0 0;
+    width: min(86vw, 340px);
+    transform: translateX(-105%);
+    transition: transform 180ms ease;
+  }
+  .app.catalog-open .catalog { transform: none; box-shadow: var(--shadow); }
+  .titles h2 { font-size: 24px; }
+  .lesson { grid-template-rows: auto auto minmax(220px, 32vh) minmax(180px, 1fr) auto; }
+  .jump { grid-template-columns: 1fr; }
+  .segment pre { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalog { transition: none; }
+}
